@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:temp_h/constants.dart';
+import 'package:temp_h/screens/register_page.dart';
 import 'package:temp_h/widget/custom_bttn.dart';
 import 'package:temp_h/widget/custom_input.dart';
 
@@ -28,7 +29,7 @@ class _LoginpageState extends State<Loginpage> {
               Column(
                 children: [
                   CustomInput(
-                    hintText: "Emails..",
+                    hintText: "Email..",
                   ),
                   CustomInput(
                     hintText: "Password...",
@@ -49,7 +50,12 @@ class _LoginpageState extends State<Loginpage> {
                 child: CustomBttn(
                   text: "Create New Account",
                   onPressed: () {
-                    print("New account created");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegisterPage(),
+                      ),
+                    );
                   },
                   outlineBtn: true,
                 ),
