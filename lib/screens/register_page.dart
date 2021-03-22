@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:temp_h/widget/custom_bttn.dart';
 import 'package:temp_h/widget/custom_input.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../constants.dart';
 
@@ -12,7 +13,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  Future<void> _alertDialogBuilder() async {
+  Future<void> _alertDialogBuilder(String error) async {
     return showDialog(
         barrierDismissible: false,
         context: context,
@@ -20,7 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
           return AlertDialog(
             title: Text("Error"),
             content: Container(
-              child: Text("xyz"),
+              child: Text(error),
             ),
             actions: [
               FlatButton(
@@ -31,6 +32,40 @@ class _RegisterPageState extends State<RegisterPage> {
             ],
           );
         });
+  }
+
+  //Create new account
+  Future<String> _createAccount() async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _registerEmail, password: _registerPassword);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        return 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        return 'The account already exists for that email.';
+      }
+      return e.message;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  void _submitForm() async {
+    setState(() {
+      _registerFormLoading = true;
+    });
+    String _createAccountFeedack = await _createAccount();
+    if (_createAccountFeedack != null) {
+      _alertDialogBuilder(_createAccountFeedack);
+
+      setState(() {
+        _registerFormLoading = false;
+      });
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   bool _registerFormLoading = false;
@@ -83,12 +118,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       _registerPassword = value;
                     },
                     focusNode: _passwordFocusNode,
+                    onSubmitted: (value) {
+                      _submitForm();
+                    },
                   ),
                   CustomBttn(
                     text: "Create Account",
                     onPressed: () {
                       setState(() {
-                        _registerFormLoading = true;
+                        _submitForm();
                       });
                     },
                     isLoading: _registerFormLoading,
