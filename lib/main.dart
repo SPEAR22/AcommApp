@@ -17,6 +17,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        accentColor: Color(0xFFFF1E00)),
       home: LandingPage(),
     );
   }
