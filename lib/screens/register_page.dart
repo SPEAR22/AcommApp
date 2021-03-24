@@ -113,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   CustomInput(
                     isPasswordField: true,
-                    hintText: "********",
+                    hintText: "PASSWORD",
                     onChanged: (value) {
                       _registerPassword = value;
                     },
