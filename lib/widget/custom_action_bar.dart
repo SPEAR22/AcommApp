@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:temp_h/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomActionBar extends StatelessWidget {
   final String title;
@@ -14,6 +16,12 @@ class CustomActionBar extends StatelessWidget {
     bool _hasBackArrow = hasBackArrow ?? false;
     bool _hasTitle = hasTitle ?? true;
     bool _hasBackground = hasBackground ?? true;
+
+    final CollectionReference _userRef =
+        FirebaseFirestore.instance.collection("Users");
+
+    User _user = FirebaseAuth.instance.currentUser;
+
     return Container(
       decoration: BoxDecoration(
           gradient: _hasBackground
@@ -36,18 +44,23 @@ class CustomActionBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (_hasBackArrow)
-            Container(
-              width: 42.0,
-              height: 42.0,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              alignment: Alignment.center,
-              child: Image(
-                height: 18.0,
-                width: 18.0,
-                image: AssetImage("assets/images/rightarrow.png"),
+            GestureDetector(
+              onTap: (){
+                Navigator.pop(context);
+              },
+              child: Container(
+                width: 42.0,
+                height: 42.0,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                alignment: Alignment.center,
+                child: Image(
+                  height: 18.0,
+                  width: 18.0,
+                  image: AssetImage("assets/images/rightarrow.png"),
+                ),
               ),
             ),
           if (_hasTitle)
@@ -56,22 +69,31 @@ class CustomActionBar extends StatelessWidget {
               style: Constants.boldHeading,
             ),
           Container(
-            width: 42.0,
-            height: 42.0,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              "0",
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+              width: 42.0,
+              height: 42.0,
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(8.0),
               ),
-            ),
-          )
+              alignment: Alignment.center,
+              child: StreamBuilder(
+                stream: _userRef.doc(_user.uid).collection("Cart").snapshots(),
+                builder: (context, snapshot) {
+                  int _totalItems = 0;
+                  if(snapshot.connectionState == ConnectionState.active){
+                    List _document = snapshot.data.docs;
+                    _totalItems = _document.length;
+                  }
+                  return Text(
+                    "$_totalItems" ?? "0",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  );
+                },
+              ))
         ],
       ),
     );

@@ -12,52 +12,61 @@ class _ImageSwipeState extends State<ImageSwipe> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 400.0,
-        child: Stack(
-          children: [
-            PageView(
-              onPageChanged: (num) {
-                setState(() {
-                  _selectedPage = num;
-                });
-              },
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.0),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+            height: 400.0,
+            child: Stack(
               children: [
-                for (var i = 0; i < widget.imageList.length; i++)
-                  Container(
-                    child: Image.network(
-                      "${widget.imageList[i]}",
-                      fit: BoxFit.cover,
-                    ),
-                  )
-              ],
-            ),
-            Positioned(
-              bottom: 20.0,
-              left: 0.0,
-              right: 0.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 0; i < widget.imageList.length; i++)
-                    AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeOutCubic,
-                        width: _selectedPage == i ? 35.0 : 10.0,
-                        height: 10.0,
-                        decoration: BoxDecoration(
-                          color: _selectedPage == i
-                              ? Colors.white
-                              : Colors.white.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(12.0),
+                PageView(
+                  onPageChanged: (num) {
+                    setState(() {
+                      _selectedPage = num;
+                    });
+                  },
+                  children: [
+                    for (var i = 0; i < widget.imageList.length; i++)
+                      Container(
+                        child: Image.network(
+                          "${widget.imageList[i]}",
+                          fit: BoxFit.cover,
                         ),
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 5.0,
-                        ))
-                ],
-              ),
-            )
-          ],
-        ));
+                      )
+                  ],
+                ),
+                Positioned(
+                  bottom: 20.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (var i = 0; i < widget.imageList.length; i++)
+                        AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeOutCubic,
+                            width: _selectedPage == i ? 35.0 : 10.0,
+                            height: 10.0,
+                            decoration: BoxDecoration(
+                              color: _selectedPage == i
+                                  ? Colors.white
+                                  : Colors.white.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 5.0,
+                            ))
+                    ],
+                  ),
+                )
+              ],
+            )),
+      ),
+    );
   }
 }
