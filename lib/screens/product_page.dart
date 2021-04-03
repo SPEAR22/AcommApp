@@ -57,7 +57,7 @@ class _ProductNameState extends State<ProductPage> {
                 List imageList = documentData['images'];
                 List productSizes = documentData['size'];
 
-                _selectedProductSize = productSizes[0];
+                _selectedProductSize = productSizes[0]; 
 
                 return ListView(
                   padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
