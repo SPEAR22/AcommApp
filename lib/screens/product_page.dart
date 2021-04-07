@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,7 +33,17 @@ class _ProductNameState extends State<ProductPage> {
         .set({"size": _selectedProductSize});
   }
 
-  final SnackBar _snackBar = SnackBar(content: Text("Product Added to the Cart"),);
+  Future _addFav() {
+    return _userRef
+        .doc(_user.uid)
+        .collection("Fav")
+        .doc(widget.productId)
+        .set({"size": _selectedProductSize});
+  }
+
+  final SnackBar _snackBar = SnackBar(
+    content: Text("Product Added Succesfully!"),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +65,7 @@ class _ProductNameState extends State<ProductPage> {
                 List imageList = documentData['images'];
                 List productSizes = documentData['size'];
 
-                _selectedProductSize = productSizes[0]; 
+                _selectedProductSize = productSizes[0];
 
                 return ListView(
                   padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
@@ -105,7 +113,7 @@ class _ProductNameState extends State<ProductPage> {
                     ),
                     ProductSize(
                       productSizes: productSizes,
-                      onSelected: (size){
+                      onSelected: (size) {
                         _selectedProductSize = size;
                       },
                     ),
@@ -122,16 +130,22 @@ class _ProductNameState extends State<ProductPage> {
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             alignment: Alignment.center,
-                            child: Image(
-                              image: AssetImage(
-                                "assets/images/favorite.png",
+                            child: GestureDetector(
+                              onTap: () async {
+                                await _addFav();
+                                Scaffold.of(context).showSnackBar(_snackBar);
+                              },
+                              child: Image(
+                                image: AssetImage(
+                                  "assets/images/favorite.png",
+                                ),
+                                width: 25.0,
                               ),
-                              width: 25.0,
                             ),
                           ),
                           Expanded(
                             child: GestureDetector(
-                              onTap: ()async{
+                              onTap: () async {
                                 await _addCart();
                                 Scaffold.of(context).showSnackBar(_snackBar);
                               },
